@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicias Gourmet | Cardápio</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cardapio.css">
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header>
+        <div class="logo-header">
+            <img src="img/logo.webp" alt="Delicias Gourmet">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#cardapio">Cardápio</a></li>
+                <li><a href="#sobre">Sobre Nós</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+        <a href="https://wa.me/554598352808" class="btn-whatsapp">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+    </header>
+
+    <!-- Hero -->
+ <!-- Carrossel de banners -->
+<section class="carrossel" id="home">
+    <div class="carrossel-slides">
+        <div class="slide ativo">
+            <img src="img/Banner1.png" alt="Shawarmas Delicias Gourmet">
+        </div>
+        <div class="slide">
+            <img src="img/Banner2.png" alt="Salgados Delicias Gourmet">
+        </div>
+        <div class="slide">
+            <img src="img/Banner3.png" alt="Doces Delicias Gourmet">
+        </div>
+    </div>
+
+    <!-- Indicadores (bolinhas) -->
+    <div class="carrossel-indicadores">
+        <button class="indicador ativo" data-slide="0" aria-label="Ir para slide 1"></button>
+        <button class="indicador" data-slide="1" aria-label="Ir para slide 2"></button>
+        <button class="indicador" data-slide="2" aria-label="Ir para slide 3"></button>
+    </div>
+</section>
+
+    <!-- Cardápio -->
+    <section id="cardapio">
+        <h2 class="titulo-secao">
+            <img src="img/detalhe.webp" alt=""> Cardápio <img src="img/detalhe.webp" alt="">
+        </h2>
+
+        <h3 class="subtitulo-categoria">Salgados</h3>
+        <div class="grid-produtos" id="gridSalgados"></div>
+
+        <h3 class="subtitulo-categoria">Doces</h3>
+        <div class="grid-produtos" id="gridDoces"></div>
+
+        <h3 class="subtitulo-categoria">Bebidas</h3>
+        <div class="grid-produtos" id="gridBebidas"></div>
+    </section>
+
+    <!-- Produtos Especiais -->
+    <section class="produtos-especiais">
+        <h2 class="titulo-secao">
+            <img src="img/detalhe.webp" alt=""> Produtos Especiais <img src="img/detalhe.webp" alt="">
+        </h2>
+        <div class="grid-especiais">
+            <div class="card-especial">Em breve</div>
+            <div class="card-especial">Em breve</div>
+            <div class="card-especial">Em breve</div>
+            <div class="card-especial">Em breve</div>
+        </div>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section class="sobre-nos" id="sobre">
+        <div class="sobre-imagem">
+            <img src="img/foodtruck.webp" alt="Food truck Delicias Gourmet">
+        </div>
+        <div class="sobre-texto">
+            <h2>Sobre Nós</h2>
+            <p>A Delicias Gourmet iniciou sua trajetória participando de feiras de produtos, trabalhando com doces e salgados preparados com dedicação e qualidade. Em 2016, surgiu a oportunidade de adquirir um food truck, levando seus produtos para eventos e feiras de diversas cidades da região, como Cassino, Paloma e Mercado Cândido Rondon.</p>
+            <p>Em 2019 vivemos um período de pausa devido à pandemia. Em 2025 retomamos as atividades com o food truck em um ponto fixo localizado em Biopark.</p>
+            <p>Atualmente, a Delicias Gourmet oferece uma grande variedade de produtos preparados no local, incluindo shawarmas, crepes franceses, churros, pastéis, cafés e diversas opções de doces, além de novidades que são lançadas periodicamente para seus clientes.</p>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer id="contato">
+        <div class="footer-conteudo">
+            <div class="footer-logo">
+                <img src="img/logo.webp" alt="Delicias Gourmet">
+            </div>
+            <div class="footer-info">
+                <h4>Horário de atendimento:</h4>
+                <p>07:30 - 21h</p>
+                <p>(Segunda a Sexta)</p>
+            </div>
+            <div class="footer-info">
+                <h4>Localização:</h4>
+                <p>Biopark, Toledo - PR, Brasil</p>
+            </div>
+            <div class="footer-redes">
+                <h4>Acesse nossas redes:</h4>
+                <a href="https://wa.me/554598352808"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/deliciasgourmet.2016toledo/"><i class="fab fa-instagram" ></i></a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy;2026 Delicia Gourmet. Todos direitos reservados
+        </div>
+    </footer>
+
+    <!-- Carrinho -->
+    <button class="carrinho-flutuante" id="abrirCarrinho">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="contador" id="contadorCarrinho">0</span>
+    </button>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="carrinho-container" id="carrinhoContainer">
+        <div class="carrinho-header">
+            <h2>Seu Carrinho</h2>
+            <button class="fechar-carrinho" id="fecharCarrinho"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="carrinho-itens" id="carrinhoItens">
+            <p style="text-align: center; color: #999; margin-top: 2rem;">Seu carrinho está vazio</p>
+        </div>
+        <div class="carrinho-total">
+            <p>Total: <span id="totalCarrinho">R$ 0,00</span></p>
+            <button class="btn-finalizar" id="finalizarCompra">Finalizar Pedido</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos | Delicias Gourmet Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pedidos.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-admin">
+        <img src="img/logoadm.webp" alt="Delicias Gourmet">
+    </header>
+
+    <div class="layout-admin">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="catalogo.html">
+                <i class="fas fa-th-large"></i> Catálogo
+            </a>
+            <a href="pedidos.html" class="ativo">
+                <i class="fas fa-shopping-cart"></i> Pedidos
+            </a>
+            <a href="banners.html">
+                <i class="fas fa-image"></i> Banners
+            </a>
+        </aside>
+
+        <!-- Conteúdo -->
+        <main class="conteudo-admin">
+            <div class="kanban">
+                <!-- Coluna: Pedidos -->
+                <div class="coluna-kanban">
+                    <h2>Pedidos:</h2>
+                    <div class="lista-pedidos" id="listaPedidos"></div>
+                </div>
+
+                <!-- Coluna: Em Preparo -->
+                <div class="coluna-kanban">
+                    <h2>Em Preparo:</h2>
+                    <div class="lista-pedidos" id="listaPreparo"></div>
+                </div>
+
+                <!-- Coluna: Prontos -->
+                <div class="coluna-kanban">
+                    <h2>Prontos:</h2>
+                    <div class="lista-pedidos" id="listaProntos"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE "+" (novo pedido) -->
+    <button class="btn-novo-pedido" id="btnNovoPedido" title="Adicionar novo pedido">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- MODAL: NOVO PEDIDO -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-pedido" id="modalPedido">
+        <div class="modal-header">
+            <h2>Novo Pedido</h2>
+            <button class="modal-fechar" id="fecharModal"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Nome do cliente -->
+            <label for="inputCliente">Nome do cliente:</label>
+            <input type="text" id="inputCliente" placeholder="Ex: Arthur Henrique" autocomplete="off">
+
+            <!-- Adicionar item -->
+        <label for="selectProduto">Adicionar item:</label>
+            <div class="linha-add-item">
+                <select id="selectProduto">
+                <option value="">-- Selecione --</option>
+                </select>
+            <input type="number" id="inputQtd" value="1" min="1" max="99" title="Quantidade">
+            <button type="button" class="btn-add-item" id="btnAddItem" title="Adicionar item">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+            <!-- Lista de itens adicionados -->
+            <label>Itens do pedido:</label>
+            <div class="lista-itens-modal" id="listaItensModal">
+                <p class="vazio-itens">Nenhum item adicionado ainda</p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
+            <button class="btn-salvar" id="btnSalvarPedido">Criar Pedido</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ Script carregou');
+
+        /* ============================================
+           PRODUTOS DO SISTEMA
+           ============================================ */
+        const produtosSistema = {
+            salgados: [
+                { id: 1, nome: "Shawarma de Frango", preco: 27.00 },
+                { id: 2, nome: "Shawarma de Carne", preco: 29.00 },
+                { id: 3, nome: "Shawarma Misto", preco: 28.00 },
+                { id: 4, nome: "Shawarma Especial", preco: 32.00 },
+                { id: 5, nome: "Crepe Francês", preco: 25.00 },
+                { id: 6, nome: "Pastel", preco: 12.00 },
+                { id: 7, nome: "Churros", preco: 15.00 },
+                { id: 8, nome: "Porção de Batata", preco: 18.00 }
+            ],
+            doces: [
+                { id: 9, nome: "Churros Especial", preco: 20.00 },
+                { id: 10, nome: "Crepe Doce", preco: 22.00 },
+                { id: 11, nome: "Bolo de Pote", preco: 15.00 },
+                { id: 12, nome: "Brownie", preco: 12.00 },
+                { id: 13, nome: "Torta de Limão", preco: 18.00 },
+                { id: 14, nome: "Pudim", preco: 10.00 },
+                { id: 15, nome: "Café Gourmet", preco: 8.00 },
+                { id: 16, nome: "Mousse", preco: 12.00 }
+            ],
+            bebidas: [
+                { id: 17, nome: "Refrigerante Lata (Coca)", preco: 6.00 },
+                { id: 18, nome: "Suco Natural", preco: 10.00 },
+                { id: 19, nome: "Água Mineral", preco: 4.00 },
+                { id: 20, nome: "Café Expresso", preco: 7.00 },
+                { id: 21, nome: "Chá Gelado", preco: 8.00 },
+                { id: 22, nome: "Vitamina", preco: 12.00 },
+                { id: 23, nome: "Milkshake", preco: 18.00 },
+                { id: 24, nome: "Água com Gás", preco: 5.00 }
+            ]
+        };
+
+        /* ============================================
+           ESTADO DOS PEDIDOS
+           ============================================ */
+        let pedidos = [
+            {
+                id: 1,
+                cliente: "Arthur Henrique",
+                itens: [{ nome: "Shawarma de Frango", qtd: 1, preco: 27.00 }],
+                hora: "10:32"
+            },
+            {
+                id: 2,
+                cliente: "Pedro",
+                itens: [{ nome: "Churros de chocolate", qtd: 2, preco: 20.00 }],
+                hora: "10:45"
+            }
+        ];
+
+        let emPreparo = [
+            {
+                id: 3,
+                cliente: "Arthur Henrique",
+                itens: [
+                    { nome: "Shawarma Misto", qtd: 1, preco: 28.00 },
+                    { nome: "Refrigerante Lata (Coca)", qtd: 1, preco: 6.00 }
+                ],
+                hora: "10:20"
+            }
+        ];
+
+        let prontos = [
+            {
+                id: 4,
+                cliente: "Pedro",
+                itens: [{ nome: "Churros de chocolate", qtd: 1, preco: 20.00 }],
+                hora: "10:05"
+            }
+        ];
+
+        let proximoId = 5;
+        let itensNovoPedido = [];
+
+        /* ============================================
+           ELEMENTOS DOM
+           ============================================ */
+        const listaPedidos = document.getElementById('listaPedidos');
+        const listaPreparo = document.getElementById('listaPreparo');
+        const listaProntos = document.getElementById('listaProntos');
+        const btnNovoPedido = document.getElementById('btnNovoPedido');
+        const modalPedido = document.getElementById('modalPedido');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const fecharModalBtn = document.getElementById('fecharModal');
+        const btnCancelar = document.getElementById('btnCancelar');
+        const btnSalvarPedido = document.getElementById('btnSalvarPedido');
+        const selectProduto = document.getElementById('selectProduto');
+        const inputCliente = document.getElementById('inputCliente');
+        const inputQtd = document.getElementById('inputQtd');
+        const btnAddItem = document.getElementById('btnAddItem');
+        const listaItensModal = document.getElementById('listaItensModal');
+
+        /* ============================================
+           UTILITÁRIOS
+           ============================================ */
+        function horaAtual() {
+            const agora = new Date();
+            const hh = String(agora.getHours()).padStart(2, '0');
+            const mm = String(agora.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
+        }
+
+        /* ============================================
+           RENDERIZAÇÃO DO KANBAN
+           ============================================ */
+        function criarCardPedido(pedido, coluna) {
+            const concluido = coluna === 'prontos' ? 'concluido' : '';
+            return `
+                <div class="card-pedido ${concluido}" onclick="avancarPedido(${pedido.id}, '${coluna}')">
+                    <div class="bolinha"></div>
+                    <div class="texto-pedido">
+                        <div class="topo-pedido">
+                            <h4>${pedido.cliente}</h4>
+                            <span class="hora-pedido"><i class="far fa-clock"></i> ${pedido.hora}</span>
+                        </div>
+                        <ul class="itens-pedido">
+                            ${pedido.itens.map(i => `<li><strong>${i.qtd}x</strong> ${i.nome}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button class="btn-apagar-pedido"
+                            onclick="event.stopPropagation(); apagarPedido(${pedido.id}, '${coluna}')"
+                            title="Apagar pedido">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderizar() {
+            listaPedidos.innerHTML = pedidos.map(p => criarCardPedido(p, 'pedidos')).join('');
+            listaPreparo.innerHTML = emPreparo.map(p => criarCardPedido(p, 'preparo')).join('');
+            listaProntos.innerHTML = prontos.map(p => criarCardPedido(p, 'prontos')).join('');
+        }
+
+        /* ============================================
+           AVANÇAR / APAGAR PEDIDO
+           ============================================ */
+        function avancarPedido(id, colunaAtual) {
+            let origem, destino;
+            if (colunaAtual === 'pedidos') { origem = pedidos; destino = emPreparo; }
+            else if (colunaAtual === 'preparo') { origem = emPreparo; destino = prontos; }
+            else {
+                prontos = prontos.filter(p => p.id !== id);
+                renderizar();
+                return;
+            }
+            const index = origem.findIndex(p => p.id === id);
+            if (index !== -1) {
+                destino.push(origem.splice(index, 1)[0]);
+                renderizar();
+            }
+        }
+
+        function apagarPedido(id, coluna) {
+            let lista;
+            if (coluna === 'pedidos') lista = pedidos;
+            else if (coluna === 'preparo') lista = emPreparo;
+            else lista = prontos;
+
+            const pedido = lista.find(p => p.id === id);
+            if (!pedido) return;
+
+            const confirmar = confirm(
+                `Apagar o pedido de ${pedido.cliente}?\n\n` +
+                `Itens:\n${pedido.itens.map(i => `• ${i.qtd}x ${i.nome}`).join('\n')}`
+            );
+            if (!confirmar) return;
+
+            if (coluna === 'pedidos') pedidos = pedidos.filter(p => p.id !== id);
+            else if (coluna === 'preparo') emPreparo = emPreparo.filter(p => p.id !== id);
+            else prontos = prontos.filter(p => p.id !== id);
+
+            renderizar();
+        }
+
+        /* ============================================
+           SELECT DE PRODUTOS
+           ============================================ */
+        function popularSelect() {
+            const optionGroups = Object.entries(produtosSistema).map(([categoria, itens]) => {
+                const opcoes = itens.map(p =>
+                    `<option value="${p.nome}|${p.preco}">${p.nome} — R$ ${p.preco.toFixed(2).replace('.', ',')}</option>`
+                ).join('');
+                const nomeCategoria = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+                return `<optgroup label="${nomeCategoria}">${opcoes}</optgroup>`;
+            }).join('');
+            selectProduto.innerHTML = '<option value="">-- Selecione --</option>' + optionGroups;
+        }
+
+        /* ============================================
+           ITENS DO MODAL
+           ============================================ */
+        function renderizarItensModal() {
+            if (itensNovoPedido.length === 0) {
+                listaItensModal.innerHTML = '<p class="vazio-itens">Nenhum item adicionado ainda</p>';
+                return;
+            }
+            listaItensModal.innerHTML = itensNovoPedido.map((item, index) => `
+                <div class="item-modal">
+                    <span><strong>${item.qtd}x</strong> ${item.nome}</span>
+                    <span class="preco-modal">R$ ${(item.preco * item.qtd).toFixed(2).replace('.', ',')}</span>
+                    <button class="btn-remover-item-modal" onclick="removerItemModal(${index})" title="Remover">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function adicionarItemModal() {
+            const valor = selectProduto.value;
+            if (!valor) {
+                alert('Selecione um produto.');
+                selectProduto.focus();
+                return;
+            }
+            const [nome, precoStr] = valor.split('|');
+            const preco = parseFloat(precoStr);
+            const qtd = parseInt(inputQtd.value) || 1;
+
+            const existente = itensNovoPedido.find(i => i.nome === nome);
+            if (existente) existente.qtd += qtd;
+            else itensNovoPedido.push({ nome, preco, qtd });
+
+            selectProduto.value = '';
+            inputQtd.value = 1;
+            selectProduto.focus();
+            renderizarItensModal();
+        }
+
+        function removerItemModal(index) {
+            itensNovoPedido.splice(index, 1);
+            renderizarItensModal();
+        }
+
+        /* ============================================
+           ABRIR / FECHAR MODAL
+           ============================================ */
+        function abrirModal() {
+            itensNovoPedido = [];
+            inputCliente.value = '';
+            selectProduto.value = '';
+            inputQtd.value = 1;
+            renderizarItensModal();
+
+            modalPedido.classList.add('aberto');
+            modalOverlay.classList.add('ativo');
+            setTimeout(() => inputCliente.focus(), 200);
+        }
+
+        function fecharModal() {
+            modalPedido.classList.remove('aberto');
+            modalOverlay.classList.remove('ativo');
+        }
+
+        /* ============================================
+           CRIAR PEDIDO
+           ============================================ */
+        function criarPedido() {
+            const cliente = inputCliente.value.trim();
+
+            if (!cliente) {
+                alert('Informe o nome do cliente.');
+                inputCliente.focus();
+                return;
+            }
+            if (itensNovoPedido.length === 0) {
+                alert('Adicione pelo menos 1 item ao pedido.');
+                selectProduto.focus();
+                return;
+            }
+
+            pedidos.push({
+                id: proximoId++,
+                cliente: cliente,
+                itens: [...itensNovoPedido],
+                hora: horaAtual()
+            });
+
+            renderizar();
+            fecharModal();
+        }
+
+        /* ============================================
+           CARREGAR PEDIDOS DO SITE PÚBLICO (localStorage)
+           ============================================ */
+        function carregarPedidosDoSite() {
+            const salvos = JSON.parse(localStorage.getItem('pedidosKanban') || '[]');
+            if (salvos.length === 0) return;
+
+            salvos.forEach(p => {
+                const jaExiste = pedidos.some(existente => existente.id === p.id);
+                if (!jaExiste) pedidos.push(p);
+            });
+
+            localStorage.removeItem('pedidosKanban');
+        }
+
+        /* ============================================
+           EVENT LISTENERS
+           ============================================ */
+        btnNovoPedido.addEventListener('click', abrirModal);
+        fecharModalBtn.addEventListener('click', fecharModal);
+        btnCancelar.addEventListener('click', fecharModal);
+        modalOverlay.addEventListener('click', fecharModal);
+        btnSalvarPedido.addEventListener('click', criarPedido);
+        btnAddItem.addEventListener('click', adicionarItemModal);
+
+        inputCliente.addEventListener('keydown', e => {
+            if (e.key === 'Enter') selectProduto.focus();
+        });
+
+        selectProduto.addEventListener('keydown', e => {
+            if (e.key === 'Enter') adicionarItemModal();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') fecharModal();
+        });
+
+        /* ============================================
+           INICIALIZAÇÃO
+           ============================================ */
+        popularSelect();
+        renderizarItensModal();
+        carregarPedidosDoSite();
+        renderizar();
+
+        console.log('Tudo inicializado');
+    </script>
+</body>
+</html>

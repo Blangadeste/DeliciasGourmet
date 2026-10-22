@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo | Delicias Gourmet Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/catalogo.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-admin">
+        <img src="img/logoadm.webp" alt="Delicias Gourmet">
+    </header>
+
+    <div class="layout-admin">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="catalogo.html" class="ativo">
+                <i class="fas fa-th-large"></i> Catálogo
+            </a>
+            <a href="pedidos.html">
+                <i class="fas fa-shopping-cart"></i> Pedidos
+            </a>
+            <a href="banners.html">
+                <i class="fas fa-image"></i> Banners
+            </a>
+        </aside>
+
+        <!-- Conteúdo -->
+        <main class="conteudo-admin">
+            <h1 class="titulo-pagina">Catálogo</h1>
+
+            <!-- SALGADOS -->
+            <h2 class="categoria-titulo">Salgados</h2>
+            <div class="grid-catalogo" id="gridSalgados"></div>
+
+            <!-- DOCES -->
+            <h2 class="categoria-titulo">Doces</h2>
+            <div class="grid-catalogo" id="gridDoces"></div>
+
+            <!-- BEBIDAS -->
+            <h2 class="categoria-titulo">Bebidas</h2>
+            <div class="grid-catalogo" id="gridBebidas"></div>
+        </main>
+    </div>
+
+    <script>
+        const produtos = {
+            salgados: [
+                { id: 1, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 2, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 3, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
+            ],
+            doces: [
+                { id: 4, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 5, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 6, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
+            ],
+            bebidas: [
+                { id: 7, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 8, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
+                { id: 9, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
+            ]
+        };
+
+        function criarCard(produto) {
+            return `
+                <div class="card-catalogo">
+                    <div class="imagem">
+                        <img src="${produto.imagem}" alt="${produto.nome}" onerror="this.style.display='none'">
+                    </div>
+                    <div class="info">
+                        <h4>${produto.nome}</h4>
+                        <div class="preco">R$ ${produto.preco}</div>
+                        <button class="btn-comprar" onclick="editarProduto(${produto.id})">Comprar</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function criarCardAdicionar(categoria) {
+            return `
+                <div class="card-adicionar" onclick="adicionarProduto('${categoria}')">
+                    <div class="imagem-add">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="info-add">
+                        <button class="btn-adicionar">Adicionar ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizar() {
+            document.getElementById('gridSalgados').innerHTML =
+                produtos.salgados.map(criarCard).join('') + criarCardAdicionar('salgado');
+            document.getElementById('gridDoces').innerHTML =
+                produtos.doces.map(criarCard).join('') + criarCardAdicionar('doce');
+            document.getElementById('gridBebidas').innerHTML =
+                produtos.bebidas.map(criarCard).join('') + criarCardAdicionar('bebida');
+        }
+
+        function editarProduto(id) {
+            alert('Editar produto ID: ' + id);
+        }
+
+        function adicionarProduto(categoria) {
+            alert('Adicionar novo item na categoria: ' + categoria);
+        }
+
+        renderizar();
+    </script>
+</body>
+</html>

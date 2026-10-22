@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banners | Delicias Gourmet Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/banners.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-admin">
+        <img src="img/logoadm.webp" alt="Delicias Gourmet">
+    </header>
+
+    <div class="layout-admin">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="catalogo.html">
+                <i class="fas fa-th-large"></i> Catálogo
+            </a>
+            <a href="pedidos.html">
+                <i class="fas fa-shopping-cart"></i> Pedidos
+            </a>
+            <a href="banners.html" class="ativo">
+                <i class="fas fa-image"></i> Banners
+            </a>
+        </aside>
+
+        <!-- Conteúdo -->
+        <main class="conteudo-admin">
+            <h1 class="titulo-pagina">Banners</h1>
+
+            <div class="grid-banners" id="gridBanners"></div>
+        </main>
+    </div>
+
+    <script>
+        /* BANNERS DO SITE
+           Estes são os banners que aparecem no carrossel
+           do site público (index.html). */
+        const banners = [
+            {
+                id: 1,
+                imagem: "img/Banner1.png",
+                alt: "Shawarmas Delicias Gourmet",
+                titulo: "Shawarmas",
+                ativo: true
+            },
+            {
+                id: 2,
+                imagem: "img/Banner2.png",
+                alt: "Salgados Delicias Gourmet",
+                titulo: "Salgados",
+                ativo: true
+            },
+            {
+                id: 3,
+                imagem: "img/Banner3.png",
+                alt: "Doces Delicias Gourmet",
+                titulo: "Doces",
+                ativo: true
+            }
+        ];
+
+        /* RENDERIZAÇÃO DOS CARDS */
+        function criarCardBanner(banner) {
+            if (banner.imagem) {
+                return `
+                    <div class="card-banner" onclick="editarBanner(${banner.id})">
+                        <img src="${banner.imagem}" alt="${banner.alt}">
+                        <div class="banner-info">
+                            <span class="banner-titulo">${banner.titulo}</span>
+                            <span class="banner-status ${banner.ativo ? 'ativo' : 'inativo'}">
+                                ${banner.ativo ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+            return `
+                <div class="card-banner card-banner-vazio" onclick="adicionarBanner()">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="placeholder-banner">Clique para adicionar banner</span>
+                </div>
+            `;
+        }
+
+        function renderizar() {
+            document.getElementById('gridBanners').innerHTML =
+                banners.map(criarCardBanner).join('');
+        }
+
+        /*  AÇÕES */
+        function editarBanner(id) {
+            const banner = banners.find(b => b.id === id);
+            alert(
+                `Editando banner:\n` +
+                `ID: ${banner.id}\n` +
+                `Título: ${banner.titulo}\n` +
+                `Imagem: ${banner.imagem}\n` +
+                `Status: ${banner.ativo ? 'Ativo' : 'Inativo'}`
+            );
+        }
+
+        function adicionarBanner() {
+            alert('Adicionar novo banner ao carrossel');
+        }
+
+        /*  INICIALIZAÇÃO */
+        renderizar();
+    </script>
+</body>
+</html>
