@@ -15,6 +15,7 @@ Atualmente, suas atividades são realizadas no **Biopark**. O negócio oferece u
 
 ### Oportunidades de Melhoria
 *   Fortalecer a presença digital da marca e seus produtos.
+*   Melhor controle dos pedidos e da promoçoes de seus produtos
 *   Proporcionar uma comunicação rápida e eficiente com o cliente.
 *   Preservar e destacar o impacto da identidade visual.
 
