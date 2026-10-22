@@ -37,29 +37,6 @@ Para atender às necessidades da empresa, o site foi projetado com uma divisão 
 
 ---
 
-## 🖼️ Apresentação Visual
-
-<div align="center">
-  
-  ### Shawarmas: Frango, Misto e Carne
-  <!-- Substitua o link abaixo pela imagem do seu repositório, se tiver -->
-  <img src="https://via.placeholder.com/800x400/800020/ffffff?text=Imagem+Shawarmas" alt="Shawarmas" width="80%">
-
-  <br><br>
-
-  ### Doces que vão te levar da infância à qualidade
-  <img src="https://via.placeholder.com/800x400/800020/ffffff?text=Imagem+Churros" alt="Churros" width="80%">
-
-  <br><br>
-
-  ### Os melhores salgados da região
-  *Pastel (R$ 8,00) | Misto Quente (R$ 6,00) | Mini Pizza (R$ 6,00)*
-  <img src="https://via.placeholder.com/800x400/f5e6d3/000000?text=Imagem+Salgados" alt="Salgados" width="80%">
-
-</div>
-
----
-
 ## 👨‍💻 Equipe de Desenvolvimento
 
 Projeto desenvolvido para a disciplina de **Engenharia de Software**:
