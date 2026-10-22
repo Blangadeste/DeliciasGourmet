@@ -1,0 +1,129 @@
+/* PÁGINA: BANNERS */
+
+.titulo-pagina {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--vinho);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    text-decoration: underline;
+    text-underline-offset: 12px;
+    text-decoration-thickness: 4px;
+}
+
+.grid-banners {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 0 3rem;
+}
+
+/* Card de banner */
+.card-banner {
+    background-color: var(--cinza-medio);
+    border-radius: 12px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    transition: 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.card-banner:hover {
+    transform: scale(1.02);
+    box-shadow: var(--sombra-forte);
+}
+
+.card-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-banner .placeholder-banner {
+    color: #999;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/*  RESPONSIVO */
+@media (max-width: 768px) {
+    .grid-banners {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+    .titulo-pagina { font-size: 2rem; }
+    .card-banner { height: 220px; }
+}
+
+
+/* INFO DO BANNER (título + status) */
+.card-banner {
+    position: relative;
+}
+
+.banner-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.8rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--branco);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.banner-titulo {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.banner-status {
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.banner-status.ativo {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.banner-status.inativo {
+    background-color: #999;
+    color: white;
+}
+
+/* CARD VAZIO (adicionar novo banner)*/
+.card-banner-vazio {
+    flex-direction: column;
+    gap: 0.8rem;
+    color: #777;
+    background-color: #E0E0E0;
+    border: 2px dashed #999;
+}
+
+.card-banner-vazio i {
+    font-size: 3rem;
+    color: #999;
+}
+
+.card-banner-vazio:hover {
+    background-color: #d5d5d5;
+    border-color: var(--vinho);
+}
+
+.card-banner-vazio:hover i {
+    color: var(--vinho);
+}

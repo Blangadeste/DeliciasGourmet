@@ -1,0 +1,600 @@
+/* PÁGINA: PEDIDOS (KANBAN) */
+
+.kanban {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    height: calc(100vh - 220px);
+}
+
+.coluna-kanban {
+    background-color: var(--branco);
+    border-radius: 16px;
+    box-shadow: var(--sombra);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.coluna-kanban h2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--vinho);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.lista-pedidos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+}
+
+/* Card de pedido individual */
+.card-pedido {
+    background-color: var(--cinza-claro);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.card-pedido:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Bolinha de status (vazada por padrão) */
+.card-pedido .bolinha {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid var(--preto-sidebar);
+    background-color: transparent;
+    flex-shrink: 0;
+    transition: 0.3s;
+}
+
+/* Bolinha preenchida quando concluído (coluna Prontos) */
+.card-pedido.concluido .bolinha {
+    background-color: var(--rosa-claro);
+    border-color: var(--vinho);
+}
+
+.card-pedido .texto-pedido {
+    flex: 1;
+}
+
+.card-pedido .texto-pedido h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--vinho);
+    margin-bottom: 0.2rem;
+}
+
+.card-pedido .texto-pedido p {
+    font-size: 0.85rem;
+    color: var(--marrom-texto);
+}
+
+/*RESPONSIVO */
+@media (max-width: 1024px) {
+    .kanban {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .coluna-kanban h2 { font-size: 1.4rem; }
+}
+
+@media (max-width: 768px) {
+    .kanban {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    .coluna-kanban { min-height: 300px; }
+}
+
+/*BOTÃO FLUTUANTE "+" (novo pedido) */
+.btn-novo-pedido {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-color: var(--vinho);
+    color: var(--branco);
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(123, 30, 30, 0.4);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.btn-novo-pedido:hover {
+    background-color: var(--vinho-escuro);
+    transform: scale(1.1) rotate(90deg);
+}
+
+/*MODAL DE NOVO PEDIDO */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.ativo {
+    display: block;
+    opacity: 1;
+}
+
+.modal-pedido {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background-color: var(--branco);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 450px;
+    z-index: 1001;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.modal-pedido.aberto {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+    background-color: var(--vinho);
+    color: var(--branco);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.modal-fechar {
+    background: none;
+    border: none;
+    color: var(--branco);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-fechar:hover {
+    transform: scale(1.2);
+    color: var(--rosa-claro);
+}
+
+.modal-body {
+    padding: 1.8rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.modal-body label {
+    font-weight: 600;
+    color: var(--vinho);
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+}
+
+.modal-body select,
+.modal-body input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: var(--marrom-texto);
+    transition: 0.3s;
+    outline: none;
+}
+
+.modal-body select:focus,
+.modal-body input:focus {
+    border-color: var(--vinho);
+    box-shadow: 0 0 0 3px rgba(123, 30, 30, 0.1);
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+}
+
+.btn-cancelar,
+.btn-salvar {
+    padding: 0.7rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-cancelar {
+    background-color: #e0e0e0;
+    color: var(--marrom-texto);
+}
+
+.btn-cancelar:hover {
+    background-color: #cccccc;
+}
+
+.btn-salvar {
+    background-color: var(--vinho);
+    color: var(--branco);
+}
+
+.btn-salvar:hover {
+    background-color: var(--vinho-escuro);
+    transform: scale(1.03);
+}
+
+/* RESPONSIVO */
+@media (max-width: 480px) {
+    .btn-novo-pedido {
+        width: 55px;
+        height: 55px;
+        font-size: 1.5rem;
+        bottom: 20px;
+        right: 20px;
+    }
+    .modal-pedido {
+        width: 95%;
+    }
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+}
+
+/* BOTÃO DE APAGAR PEDIDO */
+.card-pedido {
+    position: relative; /* para posicionar a lixeira */
+}
+
+.btn-apagar-pedido {
+    background: none;
+    border: none;
+    color: #b33;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.btn-apagar-pedido:hover {
+    background-color: rgba(179, 51, 51, 0.15);
+    color: #d9534f;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ============================================
+   CARD DE PEDIDO (atualizado com multi-itens)
+   ============================================ */
+.card-pedido {
+    background-color: var(--cinza-claro);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.card-pedido:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-pedido .bolinha {
+    margin-top: 6px;
+}
+
+.card-pedido .texto-pedido {
+    flex: 1;
+    min-width: 0;
+}
+
+.topo-pedido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.card-pedido .texto-pedido h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--vinho);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hora-pedido {
+    font-size: 0.75rem;
+    color: #888;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex-shrink: 0;
+}
+
+.itens-pedido {
+    list-style: none;
+    padding: 0;
+    margin: 0.3rem 0 0;
+    font-size: 0.82rem;
+    color: var(--marrom-texto);
+}
+
+.itens-pedido li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.itens-pedido li strong {
+    color: var(--vinho);
+}
+
+/* ============================================
+   MODAL: LINHA DE ADICIONAR ITEM
+   ============================================ */
+.linha-add-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.linha-add-item select {
+    flex: 1;
+}
+
+.linha-add-item input[type="number"] {
+    width: 65px;
+    padding: 0.8rem 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    transition: 0.3s;
+}
+
+.linha-add-item input[type="number"]:focus {
+    border-color: var(--vinho);
+}
+
+.btn-add-item {
+    background-color: var(--vinho);
+    color: var(--branco);
+    border: none;
+    padding: 0 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.btn-add-item:hover {
+    background-color: var(--vinho-escuro);
+    transform: scale(1.05);
+}
+
+/* ============================================
+   LISTA DE ITENS DO MODAL
+   ============================================ */
+.lista-itens-modal {
+    background-color: var(--cinza-claro);
+    border-radius: 10px;
+    padding: 0.6rem;
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+}
+
+.vazio-itens {
+    color: #999;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.8rem 0;
+    font-style: italic;
+}
+
+.item-modal {
+    background-color: var(--branco);
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--marrom-texto);
+}
+
+.item-modal > span:first-child {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-modal > span:first-child strong {
+    color: var(--vinho);
+}
+
+.preco-modal {
+    color: var(--vinho);
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.btn-remover-item-modal {
+    background: none;
+    border: none;
+    color: #b33;
+    cursor: pointer;
+    padding: 0.2rem;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.btn-remover-item-modal:hover {
+    background-color: rgba(179, 51, 51, 0.15);
+    color: #d9534f;
+}
+
+/* LIXEIRA NO CARD */
+.btn-apagar-pedido {
+    background: none;
+    border: none;
+    color: #b33;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.btn-apagar-pedido:hover {
+    background-color: rgba(179, 51, 51, 0.15);
+    color: #d9534f;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* CORREÇÃO DA LINHA DE ADICIONAR ITEM */
+.linha-add-item {
+    display: flex !important;
+    gap: 0.5rem;
+    align-items: stretch;
+    width: 100%;
+}
+
+.linha-add-item select {
+    flex: 1;
+    min-width: 0;
+    padding: 0.8rem 1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    background-color: #fff;
+    color: var(--marrom-texto);
+    cursor: pointer;
+}
+
+.linha-add-item input[type="number"] {
+    width: 70px;
+    flex-shrink: 0;
+    padding: 0.8rem 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    text-align: center;
+    background-color: #fff;
+    color: var(--marrom-texto);
+}
+
+.linha-add-item .btn-add-item {
+    width: 48px;
+    height: auto;
+    flex-shrink: 0;
+    background-color: var(--vinho);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.linha-add-item .btn-add-item:hover {
+    background-color: var(--vinho-escuro);
+    transform: scale(1.05);
+}
+
+.linha-add-item .btn-add-item:active {
+    transform: scale(0.95);
+}
