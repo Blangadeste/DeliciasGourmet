@@ -173,6 +173,108 @@
     background-color: var(--vinho-escuro);
 }
 
+/* Modal de cadastro/edição */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.ativo {
+    display: flex;
+}
+
+.modal-produto {
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: var(--sombra-forte);
+}
+
+.modal-produto h3 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--vinho);
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.modal-produto label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0.8rem 0 0.3rem;
+    color: var(--marrom-texto);
+}
+
+.modal-produto input,
+.modal-produto textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--cinza-medio);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+}
+
+.modal-erro {
+    color: var(--vinho);
+    font-size: 0.85rem;
+    margin-top: 0.6rem;
+    min-height: 1.1rem;
+}
+
+.modal-acoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.modal-acoes-direita {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.btn-cancelar,
+.btn-salvar,
+.btn-excluir {
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-cancelar {
+    background: var(--cinza-claro);
+    color: var(--marrom-texto);
+}
+
+.btn-salvar {
+    background: var(--vinho);
+    color: var(--branco);
+}
+
+.btn-salvar:hover {
+    background: var(--vinho-escuro);
+}
+
+.btn-excluir {
+    background: transparent;
+    color: var(--vinho);
+    text-decoration: underline;
+    padding: 0.6rem 0;
+}
+
 /* RESPONSIVO */
 @media (max-width: 1200px) {
     .grid-catalogo { grid-template-columns: repeat(3, 1fr); }

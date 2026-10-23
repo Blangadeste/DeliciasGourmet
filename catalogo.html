@@ -48,35 +48,68 @@
         </main>
     </div>
 
+    <!-- Modal de cadastro/edição de produto -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-produto">
+            <h3 id="modalTitulo">Novo Produto</h3>
+            <form id="formProduto">
+                <input type="hidden" id="produtoId">
+                <input type="hidden" id="produtoCategoria">
+
+                <label for="produtoNome">Nome</label>
+                <input type="text" id="produtoNome" maxlength="120" required>
+
+                <label for="produtoIngredientes">Ingredientes</label>
+                <textarea id="produtoIngredientes" maxlength="500" rows="3"></textarea>
+
+                <label for="produtoValor">Preço (R$)</label>
+                <input type="number" id="produtoValor" min="0" step="0.01" required>
+
+                <label for="produtoImagem">Imagem</label>
+                <input type="file" id="produtoImagem" accept="image/png,image/jpeg,image/webp">
+
+                <p class="modal-erro" id="modalErro"></p>
+
+                <div class="modal-acoes">
+                    <button type="button" class="btn-excluir" id="btnExcluirProduto" style="display:none">Excluir</button>
+                    <div class="modal-acoes-direita">
+                        <button type="button" class="btn-cancelar" id="btnCancelarModal">Cancelar</button>
+                        <button type="submit" class="btn-salvar">Salvar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const produtos = {
-            salgados: [
-                { id: 1, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 2, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 3, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
-            ],
-            doces: [
-                { id: 4, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 5, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 6, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
-            ],
-            bebidas: [
-                { id: 7, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 8, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" },
-                { id: 9, nome: "Shawarma de Frango", preco: 27, imagem: "img/shawarma-frango.webp" }
-            ]
+        const API_BASE = 'http://localhost:8080';
+
+        const grids = {
+            SALGADO: document.getElementById('gridSalgados'),
+            DOCE: document.getElementById('gridDoces'),
+            BEBIDA: document.getElementById('gridBebidas')
         };
 
+        const rotulosCategoria = { SALGADO: 'Salgado', DOCE: 'Doce', BEBIDA: 'Bebida' };
+
+        let produtosCache = [];
+
+        function urlImagem(imagem) {
+            if (!imagem) return '';
+            return imagem.startsWith('http') ? imagem : API_BASE + imagem;
+        }
+
         function criarCard(produto) {
+            const imagemHtml = produto.imagem
+                ? `<img src="${urlImagem(produto.imagem)}" alt="${produto.nome}" onerror="this.style.display='none'">`
+                : '';
             return `
                 <div class="card-catalogo">
-                    <div class="imagem">
-                        <img src="${produto.imagem}" alt="${produto.nome}" onerror="this.style.display='none'">
-                    </div>
+                    <div class="imagem">${imagemHtml}</div>
                     <div class="info">
                         <h4>${produto.nome}</h4>
-                        <div class="preco">R$ ${produto.preco}</div>
-                        <button class="btn-comprar" onclick="editarProduto(${produto.id})">Comprar</button>
+                        <div class="preco">R$ ${Number(produto.valor).toFixed(2).replace('.', ',')}</div>
+                        <button class="btn-comprar" onclick="abrirEdicao(${produto.id})">Editar</button>
                     </div>
                 </div>
             `;
@@ -84,35 +117,161 @@
 
         function criarCardAdicionar(categoria) {
             return `
-                <div class="card-adicionar" onclick="adicionarProduto('${categoria}')">
+                <div class="card-adicionar" onclick="abrirCadastro('${categoria}')">
                     <div class="imagem-add">
                         <i class="fas fa-plus-circle"></i>
                     </div>
                     <div class="info-add">
-                        <button class="btn-adicionar">Adicionar ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}</button>
+                        <button class="btn-adicionar">Adicionar ${rotulosCategoria[categoria]}</button>
                     </div>
                 </div>
             `;
         }
 
         function renderizar() {
-            document.getElementById('gridSalgados').innerHTML =
-                produtos.salgados.map(criarCard).join('') + criarCardAdicionar('salgado');
-            document.getElementById('gridDoces').innerHTML =
-                produtos.doces.map(criarCard).join('') + criarCardAdicionar('doce');
-            document.getElementById('gridBebidas').innerHTML =
-                produtos.bebidas.map(criarCard).join('') + criarCardAdicionar('bebida');
+            Object.keys(grids).forEach(categoria => {
+                const itens = produtosCache.filter(p => p.categoria === categoria);
+                grids[categoria].innerHTML = itens.map(criarCard).join('') + criarCardAdicionar(categoria);
+            });
         }
 
-        function editarProduto(id) {
-            alert('Editar produto ID: ' + id);
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch(`${API_BASE}/produtos?tamanho=100&direcao=ASC`);
+                if (!resposta.ok) throw new Error('Falha ao carregar produtos');
+                const pagina = await resposta.json();
+                produtosCache = pagina.content || [];
+                renderizar();
+            } catch (erro) {
+                console.error(erro);
+                alert('Não foi possível carregar o catálogo. Verifique se o backend está em execução.');
+            }
         }
 
-        function adicionarProduto(categoria) {
-            alert('Adicionar novo item na categoria: ' + categoria);
+        /* ============================================
+           MODAL DE CADASTRO/EDIÇÃO
+           ============================================ */
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitulo = document.getElementById('modalTitulo');
+        const formProduto = document.getElementById('formProduto');
+        const campoId = document.getElementById('produtoId');
+        const campoCategoria = document.getElementById('produtoCategoria');
+        const campoNome = document.getElementById('produtoNome');
+        const campoIngredientes = document.getElementById('produtoIngredientes');
+        const campoValor = document.getElementById('produtoValor');
+        const campoImagem = document.getElementById('produtoImagem');
+        const modalErro = document.getElementById('modalErro');
+        const btnExcluirProduto = document.getElementById('btnExcluirProduto');
+        const btnCancelarModal = document.getElementById('btnCancelarModal');
+
+        function abrirModal(titulo) {
+            modalErro.textContent = '';
+            modalTitulo.textContent = titulo;
+            modalOverlay.classList.add('ativo');
         }
 
-        renderizar();
+        function fecharModal() {
+            modalOverlay.classList.remove('ativo');
+            formProduto.reset();
+            campoId.value = '';
+        }
+
+        function abrirCadastro(categoria) {
+            formProduto.reset();
+            campoId.value = '';
+            campoCategoria.value = categoria;
+            btnExcluirProduto.style.display = 'none';
+            abrirModal(`Novo Produto (${rotulosCategoria[categoria]})`);
+        }
+
+        function abrirEdicao(id) {
+            const produto = produtosCache.find(p => p.id === id);
+            if (!produto) return;
+            campoId.value = produto.id;
+            campoCategoria.value = produto.categoria;
+            campoNome.value = produto.nome;
+            campoIngredientes.value = produto.ingredientes || '';
+            campoValor.value = produto.valor;
+            campoImagem.value = '';
+            btnExcluirProduto.style.display = 'inline-block';
+            abrirModal(`Editar Produto (${rotulosCategoria[produto.categoria]})`);
+        }
+
+        async function enviarImagemSeNecessario(id) {
+            const arquivo = campoImagem.files[0];
+            if (!arquivo) return;
+            const formData = new FormData();
+            formData.append('arquivo', arquivo);
+            const resposta = await fetch(`${API_BASE}/produtos/${id}/imagem`, {
+                method: 'PATCH',
+                body: formData
+            });
+            if (!resposta.ok) throw new Error('Falha ao enviar a imagem');
+        }
+
+        formProduto.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+            modalErro.textContent = '';
+
+            const corpo = {
+                nome: campoNome.value.trim(),
+                ingredientes: campoIngredientes.value.trim() || null,
+                categoria: campoCategoria.value,
+                valor: Number(campoValor.value)
+            };
+
+            try {
+                const id = campoId.value;
+                let resposta;
+                if (id) {
+                    resposta = await fetch(`${API_BASE}/produtos/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(corpo)
+                    });
+                } else {
+                    resposta = await fetch(`${API_BASE}/produtos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(corpo)
+                    });
+                }
+
+                if (!resposta.ok) throw new Error('Falha ao salvar o produto');
+                const produtoSalvo = await resposta.json();
+
+                await enviarImagemSeNecessario(produtoSalvo.id);
+
+                fecharModal();
+                await carregarProdutos();
+            } catch (erro) {
+                console.error(erro);
+                modalErro.textContent = 'Erro ao salvar o produto. Verifique os dados e tente novamente.';
+            }
+        });
+
+        btnExcluirProduto.addEventListener('click', async () => {
+            const id = campoId.value;
+            if (!id) return;
+            if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+
+            try {
+                const resposta = await fetch(`${API_BASE}/produtos/${id}`, { method: 'DELETE' });
+                if (!resposta.ok) throw new Error('Falha ao excluir o produto');
+                fecharModal();
+                await carregarProdutos();
+            } catch (erro) {
+                console.error(erro);
+                modalErro.textContent = 'Erro ao excluir o produto.';
+            }
+        });
+
+        btnCancelarModal.addEventListener('click', fecharModal);
+        modalOverlay.addEventListener('click', (evento) => {
+            if (evento.target === modalOverlay) fecharModal();
+        });
+
+        carregarProdutos();
     </script>
 </body>
 </html>
